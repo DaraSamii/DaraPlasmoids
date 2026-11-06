@@ -11,15 +11,16 @@ Rectangle {
     property real gust: NaN
     property real dir: 0
     property string unit: "km/h"
+    property real toKmh: 1
     property bool run: true
     readonly property color accent: "#2fd3c4"
-    readonly property real strength: Math.max(0.25, Math.min(3, speed / (unit === "mph" ? 12 : 20)))
+    readonly property real strength: Math.max(0.25, Math.min(3, speed * toKmh / 20))
 
     Layout.fillWidth: true
     Layout.preferredHeight: Kirigami.Units.gridUnit * 7.4
     radius: Kirigami.Units.largeSpacing
-    color: Qt.alpha(accent, 0.12)
-    border.color: Qt.alpha(accent, 0.35)
+    color: Qt.alpha(accent, 0.2)
+    border.color: Qt.alpha(accent, 0.5)
     clip: true
 
     Repeater {   // streaks
@@ -56,17 +57,31 @@ Rectangle {
                     y: parent.height / 2 - height / 2 + [-1, 0, 1, 0][index] * (parent.height / 2 - 11)
                 }
             }
-            Kirigami.Icon {
+            Canvas {   // proper arrow: shaft + filled head, pointing where the wind blows to
                 id: arrow
                 anchors.centerIn: parent
-                width: parent.width * 0.5; height: width; source: "go-up"
-                color: card.accent
-                rotation: card.dir + 180   // points where the wind blows to
+                width: parent.width * 0.62; height: width
+                rotation: card.dir + 180
                 Behavior on rotation { NumberAnimation { duration: 1200; easing.type: Easing.OutElastic; easing.amplitude: 1.0; easing.period: 0.8 } }
                 SequentialAnimation on scale {
                     running: card.run && card.visible; loops: Animation.Infinite
                     NumberAnimation { to: 1.08; duration: 1200; easing.type: Easing.InOutSine }
                     NumberAnimation { to: 0.94; duration: 1200; easing.type: Easing.InOutSine }
+                }
+                onPaint: {
+                    const ctx = getContext("2d"), w = width, h = height, cx = w / 2;
+                    ctx.reset();
+                    ctx.fillStyle = card.accent;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, h * 0.04);                     // tip
+                    ctx.lineTo(cx + w * 0.30, h * 0.46);          // right barb
+                    ctx.lineTo(cx + w * 0.10, h * 0.46);
+                    ctx.lineTo(cx + w * 0.10, h * 0.96);          // shaft
+                    ctx.lineTo(cx - w * 0.10, h * 0.96);
+                    ctx.lineTo(cx - w * 0.10, h * 0.46);
+                    ctx.lineTo(cx - w * 0.30, h * 0.46);          // left barb
+                    ctx.closePath();
+                    ctx.fill();
                 }
             }
         }

@@ -34,6 +34,7 @@ MouseArea {
 
         Kirigami.Icon {
             id: icon
+            visible: weather.cfg.panelIcon || !weather.cfg.panelTemp
             source: Plasmoid.icon
             Layout.preferredWidth: Math.min(compact.height, compact.width, Kirigami.Units.iconSizes.large)
             Layout.preferredHeight: Layout.preferredWidth
@@ -47,8 +48,8 @@ MouseArea {
             }
         }
         PlasmaComponents.Label {
-            visible: compact.now !== null
-            text: compact.now ? Math.round(compact.now.temperature_2m) + "°" : ""
+            visible: compact.now !== null && weather.cfg.panelTemp
+            text: compact.now ? Math.round(compact.now.temperature_2m) + (weather.cfg.panelUnitLetter ? weather.tempSym : "°") : ""
             font.bold: true
             font.pixelSize: Math.max(Kirigami.Theme.smallFont.pixelSize, Math.min(compact.height * 0.5, Kirigami.Units.gridUnit * 1.4))
             Layout.alignment: Qt.AlignCenter

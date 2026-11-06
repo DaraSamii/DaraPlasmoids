@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 
@@ -12,9 +13,21 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: col.implicitHeight + Kirigami.Units.largeSpacing * 2
-    radius: Kirigami.Units.largeSpacing
-    color: Qt.alpha(Kirigami.Theme.textColor, 0.06)
-    border.color: Qt.alpha(Kirigami.Theme.textColor, 0.08)
+    readonly property bool glass: Plasmoid.configuration.backgroundStyle < 2
+    readonly property real a: Plasmoid.configuration.glassOpacity / 100
+    radius: Kirigami.Units.largeSpacing * 1.5
+    color: glass ? Qt.rgba(1, 1, 1, a) : Qt.alpha(Kirigami.Theme.textColor, 0.06)
+    border.color: glass ? Qt.rgba(1, 1, 1, 0.25) : Qt.alpha(Kirigami.Theme.textColor, 0.08)
+    border.width: 1
+
+    Rectangle {   // glass sheen: bright top edge fading out
+        visible: card.glass
+        anchors.fill: parent; radius: card.radius
+        gradient: Gradient {
+            GradientStop { position: 0; color: Qt.rgba(1, 1, 1, 0.16) }
+            GradientStop { position: 0.45; color: Qt.rgba(1, 1, 1, 0) }
+        }
+    }
 
     opacity: 0
     transform: Translate { id: slide; y: 24 }

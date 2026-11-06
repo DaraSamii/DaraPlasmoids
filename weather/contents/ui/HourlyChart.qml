@@ -106,7 +106,7 @@ Flickable {
                 y: Kirigami.Units.gridUnit * 1.4
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: Kirigami.Units.iconSizes.smallMedium; height: width
-                source: modelData.icon
+                source: modelData.mono ? modelData.symbolic : modelData.icon
             }
             PlasmaComponents.Label {
                 y: fl.curveTop + fl.pts[index].y - height - Kirigami.Units.smallSpacing

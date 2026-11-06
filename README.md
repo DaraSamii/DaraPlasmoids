@@ -10,17 +10,35 @@ A detailed, animated weather widget for your panel. Add one per city (e.g. Montr
 
 ### Features
 
-- **Panel icon + temperature**, with the city name optionally shown (handy with several widgets). Tooltip shows condition and high/low. Click to open the popup.
+- **Glass look**: the sky scene fills the popup, is blurred under the content, and every section is a frosted-glass card (tint adjustable, plain Plasma-theme fallback available).
+- **Panel icon + temperature**, optional city name and unit letter. Tooltip shows condition and high/low. Click to open the popup.
 - **Animated hero scene** that follows the weather and time of day: sun with rotating rays, moon and twinkling stars, drifting clouds, rain, snow, fog and lightning.
-- **Next 24 hours**: scrollable strip with icons, a smooth temperature curve that draws itself in, and precipitation chance (Shift + wheel or drag to scroll sideways).
-- **7-day forecast** with animated high/low range bars.
+- **Plain-language summary**: "Rain expected around 3 p.m.", "Dry for the next 12 hours", or how much wind/humidity changes the feel.
+- **Next 12 / 24 / 48 hours**: scrollable strip with icons, a smooth temperature curve that draws itself in, and precipitation chance (Shift + wheel or drag to scroll sideways). Times read `2 a.m.`, `3 p.m.` (or 24-hour).
+- **3–7 day forecast** with animated high/low range bars.
 - **Sun arc**: bold colored sunrise and sunset times, daylight length, and a pulsing sun showing where it is now.
-- **Visual details**: wind card (compass, streaks that blow faster with stronger wind, gusts), humidity as a filling water droplet, rain drops for precipitation, and colored gauges for UV, pressure, visibility and cloud cover.
-- **Multiple places**: switch with chips in the popup, add with **+** (city search), remove with the trash button on the selected chip (or in settings).
-- **Sources**: pick the forecast model in settings — Best match, GEM (Environment Canada), ECMWF, GFS (NOAA), ICON (DWD), Météo-France or JMA.
-- **Open a weather website**: the globe button / "Open full forecast" button opens Windy, Yr, Open-Meteo or Google Weather (your choice in settings) at the selected city.
-- Metric / imperial, 12 / 24-hour clock, refresh interval, animations on/off.
-- Uses your Plasma theme (colors, icons, fonts) and works in light and dark themes.
+- **Visual details**: wind card (compass arrow, streaks that blow faster with stronger wind, gusts), humidity as a filling water droplet, rain drops for precipitation, colored gauges for UV, pressure, visibility and cloud cover.
+- **Multiple places**: switch with chips in the popup, add with **+** (city search), remove with the trash button on the selected chip.
+- **Sources**: forecast model (Best match, GEM – Environment Canada, ECMWF, GFS, ICON, Météo-France, JMA) and the website opened by the globe button (Windy, Yr, Open-Meteo, Google Weather).
+- **Offline notice**: if a refresh fails you keep the last data with an "Offline — showing data from …" line.
+- Uses your Plasma theme icons and fonts; animations stop automatically if you disable Plasma animations.
+
+### Settings
+
+Grouped into six pages:
+
+| Page | What you can change |
+|---|---|
+| **Places** | Saved cities for this widget, current city, city search |
+| **Units & Time** | Temperature (°C/°F), wind (km/h, mph, m/s, kn), pressure (hPa, inHg, mmHg), precipitation (mm/in), 12/24-hour clock, refresh interval |
+| **Sources** | Forecast model, website opened by the globe button |
+| **Appearance** | Glass with blur / Glass / Plain, glass tint, animations on/off, popup size |
+| **Panel** | Icon, temperature, city name, unit letter |
+| **Content** | Summary, hourly (12/24/48 h), daily (3–7 days), sun, and each detail card |
+
+### Design notes
+
+Informed by common weather-app UX guidance and glassmorphism accessibility advice: now → next hours → days ordering, a one-line "so what?" summary, icons that are recognizable at a glance, secondary metrics below the fold (and hideable), a contrast scrim under the glass so text stays readable on bright skies, a solid *Plain* fallback, and reduced motion following the system setting.
 
 ### Install
 

@@ -9,7 +9,9 @@ PlasmoidItem {
     readonly property var places: W.parsePlaces(cfg.places)
     readonly property int placeIndex: Math.max(0, Math.min(cfg.placeIndex, places.length - 1))
     readonly property var place: places.length ? places[placeIndex] : null
-    readonly property bool imperial: cfg.units === 1
+    // any change here needs a fresh download (units are applied by the API)
+    readonly property string fetchKey: [cfg.tempUnit, cfg.windUnit, cfg.precipUnit, cfg.model, cfg.hoursCount].join()
+    readonly property string tempSym: W.UNITS.temp[cfg.tempUnit][0]
 
     property var wx: null      // normalized forecast, null until first success
     property bool loading: false
@@ -27,21 +29,20 @@ PlasmoidItem {
             loading = false;
             try {
                 if (xhr.status !== 200) throw new Error("HTTP " + xhr.status);
-                wx = W.normalize(JSON.parse(xhr.responseText));
+                wx = W.normalize(JSON.parse(xhr.responseText), cfg.hoursCount);
                 error = "";
                 updated = Qt.formatTime(new Date(), Qt.locale().timeFormat(1));
             } catch (e) {
                 error = i18n("Could not load weather (%1)", e.message);
             }
         };
-        xhr.open("GET", W.forecastUrl(place, imperial, cfg.model));
+        xhr.open("GET", W.forecastUrl(place, { temp: cfg.tempUnit, wind: cfg.windUnit, precip: cfg.precipUnit, model: cfg.model }));
         xhr.send();
     }
 
     // wipe stale data when switching place/units so we never show Tehran's weather under "Montreal"
     onPlaceChanged: { wx = null; load(); }
-    onImperialChanged: { wx = null; load(); }
-    Connections { target: root.cfg; function onModelChanged() { root.wx = null; root.load(); } }
+    onFetchKeyChanged: { wx = null; load(); }
     Component.onCompleted: load()
 
     Timer {

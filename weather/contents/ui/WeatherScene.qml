@@ -1,4 +1,5 @@
 import QtQuick
+import org.kde.kirigami as Kirigami
 
 // Animated sky: gradient + sun/moon, stars, drifting clouds, rain, snow, fog, lightning. Pure QML, no shaders.
 Item {
@@ -7,8 +8,9 @@ Item {
     property bool isDay: true
     property int clouds: 0          // 0..5
     property bool animate: true
+    property real heroH: height      // sky elements live in the top part; rain/snow fall through everything
 
-    readonly property bool run: animate && visible
+    readonly property bool run: animate && visible && Kirigami.Units.longDuration > 0
     readonly property bool sunVisible: kind === "clear" || (kind === "cloudy" && clouds < 5)
     readonly property var palette: ({
         clear:  isDay ? ["#1f6fc4", "#5db0ea"] : ["#0b1530", "#27406b"],
@@ -34,7 +36,7 @@ Item {
         Rectangle {
             required property int index
             x: ((index * 7919) % 97) / 97 * s.width
-            y: ((index * 104729) % 89) / 89 * 0.7 * s.height
+            y: ((index * 104729) % 89) / 89 * 0.8 * s.heroH
             width: 1 + index % 3; height: width; radius: width / 2
             color: "white"
             opacity: 0.3
@@ -50,7 +52,7 @@ Item {
     // sun / moon
     Item {
         id: orb
-        x: s.width * 0.6; y: s.height * 0.16
+        x: s.width * 0.6; y: s.heroH * 0.16
         width: 56; height: 56
         opacity: s.sunVisible ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: 700 } }
@@ -97,7 +99,7 @@ Item {
             id: cloud
             required property int index
             readonly property real sz: 0.8 + (index % 3) * 0.3
-            y: s.height * (0.05 + ((index * 29) % 55) / 100)
+            y: s.heroH * (0.05 + ((index * 29) % 55) / 100)
             width: 120 * sz; height: 44 * sz
             opacity: s.kind === "clear" ? 0.5 : (s.kind === "cloudy" ? 0.8 : 0.55)
             Repeater {
@@ -122,7 +124,7 @@ Item {
         model: s.kind === "fog" ? 4 : 0
         Rectangle {
             required property int index
-            y: s.height * (0.25 + index * 0.17); height: 26; radius: 13
+            y: s.heroH * (0.25 + index * 0.17); height: 26; radius: 13
             width: s.width * 1.4; color: "white"; opacity: 0.18
             SequentialAnimation on x {
                 running: s.run; loops: Animation.Infinite
@@ -191,8 +193,8 @@ Item {
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
-            GradientStop { position: 0.35; color: "transparent" }
-            GradientStop { position: 1; color: "#55000000" }
+            GradientStop { position: 0; color: "#22000000" }
+            GradientStop { position: 1; color: "#44000000" }
         }
     }
 }

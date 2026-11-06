@@ -28,7 +28,9 @@ const HAS_NIGHT = ["weather-clear", "weather-few-clouds", "weather-clouds", "wea
 function info(code, isDay) {
     const w = WMO[code] || ["Unknown", "cloudy", "weather-none-available", 5];
     const night = !isDay && HAS_NIGHT.indexOf(w[2]) >= 0;
-    return { text: w[0], kind: w[1], icon: night ? w[2] + "-night" : w[2], clouds: w[3] };
+    const icon = night ? w[2] + "-night" : w[2];
+    // dark cloud icons vanish on dark glass: those use the light symbolic variant (QML picks via `mono`)
+    return { text: w[0], kind: w[1], icon: icon, symbolic: icon + "-symbolic", mono: ["weather-clear", "weather-few-clouds", "weather-clouds"].indexOf(w[2]) < 0, clouds: w[3] };
 }
 
 const pad = n => (n < 10 ? "0" : "") + n;
@@ -36,11 +38,11 @@ const hourOf = iso => +iso.substr(11, 2);
 function mins(iso) { return hourOf(iso) * 60 + +iso.substr(14, 2); }
 function hourLabel(iso, h24) {
     const h = hourOf(iso);
-    return h24 ? pad(h) : ((h % 12) || 12) + " " + (h < 12 ? "AM" : "PM");
+    return h24 ? pad(h) : ((h % 12) || 12) + " " + (h < 12 ? "a.m." : "p.m.");
 }
 function timeLabel(iso, h24) {
     const h = hourOf(iso), m = iso.substr(14, 2);
-    return h24 ? pad(h) + ":" + m : ((h % 12) || 12) + ":" + m + " " + (h < 12 ? "AM" : "PM");
+    return h24 ? pad(h) + ":" + m : ((h % 12) || 12) + ":" + m + " " + (h < 12 ? "a.m." : "p.m.");
 }
 function dayName(iso, i) {
     if (i === 0) return "Today";
@@ -92,23 +94,34 @@ function siteUrl(key, p) {
 // null-safe number formatting: models differ in what they provide
 function num(v, d) { return v === null || v === undefined ? "–" : (d ? (+v).toFixed(d) : Math.round(v)); }
 
-function forecastUrl(p, imperial, model) {
+const UNITS = {
+    temp: [["°C", "celsius"], ["°F", "fahrenheit"]],
+    wind: [["km/h", "kmh", 1], ["mph", "mph", 1.609], ["m/s", "ms", 3.6], ["kn", "kn", 1.852]], // [label, api, factor to km/h]
+    pressure: [["hPa"], ["inHg"], ["mmHg"]],
+    precip: [["mm", "mm"], ["in", "inch"]]
+};
+function pressureText(hpa, u) {
+    return u === 1 ? (hpa * 0.02953).toFixed(2) : u === 2 ? Math.round(hpa * 0.75006) : Math.round(hpa);
+}
+
+// u = {temp, wind, precip, model} (indices into UNITS, model key)
+function forecastUrl(p, u) {
     return "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon
         + "&current=temperature_2m,apparent_temperature,relative_humidity_2m,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m"
         + "&hourly=temperature_2m,precipitation_probability,weather_code,is_day,visibility,uv_index"
         + "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,precipitation_sum"
-        + "&timezone=auto&forecast_days=7&temperature_unit=" + (imperial ? "fahrenheit" : "celsius")
-        + "&wind_speed_unit=" + (imperial ? "mph" : "kmh") + "&precipitation_unit=" + (imperial ? "inch" : "mm")
-        + (model && model !== "best_match" ? "&models=" + model : "");
+        + "&timezone=auto&forecast_days=7&temperature_unit=" + UNITS.temp[u.temp][1]
+        + "&wind_speed_unit=" + UNITS.wind[u.wind][1] + "&precipitation_unit=" + UNITS.precip[u.precip][1]
+        + (u.model && u.model !== "best_match" ? "&models=" + u.model : "");
 }
 
 // Open-Meteo times are location-local ISO strings; we never convert them, only slice.
-function normalize(r) {
+function normalize(r, nHours) {
     const c = r.current, h = r.hourly, d = r.daily;
     let i = h.time.findIndex(t => t.substr(0, 13) === c.time.substr(0, 13));
     if (i < 0) i = 0;
     const hours = [];
-    for (let k = i; k < Math.min(i + 24, h.time.length); k++)
+    for (let k = i; k < Math.min(i + nHours, h.time.length); k++)
         hours.push(Object.assign({ time: h.time[k], temp: h.temperature_2m[k], pop: h.precipitation_probability[k] || 0 },
                                  info(h.weather_code[k], h.is_day[k])));
     const days = d.time.map((t, k) => Object.assign({
@@ -117,4 +130,20 @@ function normalize(r) {
     }, info(d.weather_code[k], 1)));
     const now = Object.assign({}, c, info(c.weather_code, c.is_day), { visibility: h.visibility[i], uv: h.uv_index[i] });
     return { now: now, hours: hours, days: days, units: r.current_units };
+}
+
+// One plain-language line: what to expect next (glanceable "so what?" instead of making people read charts)
+function summary(wx, h24) {
+    const now = wx.now, hrs = wx.hours.slice(0, 12);
+    const wet = k => k === "rain" || k === "snow" || k === "storm";
+    const noun = k => k === "snow" ? "Snow" : k === "storm" ? "Thunderstorms" : "Rain";
+    if (wet(now.kind)) {
+        const j = hrs.findIndex(h => !wet(h.kind));
+        return j < 0 ? noun(now.kind) + " continuing through the next 12 hours" : noun(now.kind) + " easing around " + hourLabel(hrs[j].time, h24);
+    }
+    const j = hrs.findIndex(h => wet(h.kind));
+    if (j > 0) return noun(hrs[j].kind) + " expected around " + hourLabel(hrs[j].time, h24);
+    const d = now.apparent_temperature - now.temperature_2m;
+    if (Math.abs(d) >= 3) return "Feels " + Math.abs(Math.round(d)) + "° " + (d < 0 ? "colder" : "warmer") + " than the actual temperature";
+    return "Dry for the next 12 hours";
 }

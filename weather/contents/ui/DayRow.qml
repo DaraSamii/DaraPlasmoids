@@ -19,7 +19,7 @@ RowLayout {
     Behavior on reveal { NumberAnimation { duration: 900 + row.index * 120; easing.type: Easing.OutCubic } }
 
     PlasmaComponents.Label { text: W.dayName(day.date, index); Layout.preferredWidth: Kirigami.Units.gridUnit * 3.6; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.05 }
-    Kirigami.Icon { source: day.icon; Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium; Layout.preferredHeight: Layout.preferredWidth }
+    Kirigami.Icon { source: day.mono ? day.symbolic : day.icon; Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium; Layout.preferredHeight: Layout.preferredWidth }
     PlasmaComponents.Label {
         text: day.pop >= 10 ? day.pop + "%" : ""
         color: "#4aa3ff"; font.bold: true

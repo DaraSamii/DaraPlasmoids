@@ -17,8 +17,8 @@ Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: Kirigami.Units.gridUnit * 6.6
     radius: Kirigami.Units.largeSpacing
-    color: Qt.alpha(tile.accent, 0.12)
-    border.color: Qt.alpha(tile.accent, 0.35)
+    color: Qt.alpha(tile.accent, 0.2)
+    border.color: Qt.alpha(tile.accent, 0.5)
 
     Item { id: extraSlot; anchors { top: parent.top; right: parent.right; margins: Kirigami.Units.largeSpacing } width: Kirigami.Units.gridUnit * 3; height: Kirigami.Units.gridUnit * 3.6 }
 
