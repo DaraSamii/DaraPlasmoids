@@ -1,0 +1,15 @@
+{
+  "KPlugin": {
+    "Id": "io.github.darasamii.weather",
+    "Name": "Dara Weather",
+    "Description": "Detailed multi-city weather with hourly chart, 7-day forecast, sun arc and animated scenes",
+    "Icon": "weather-few-clouds",
+    "Category": "Environment and Weather",
+    "Authors": [{ "Name": "Dara Samii" }],
+    "License": "MIT",
+    "Version": "1.0.0",
+    "Website": "https://github.com/DaraSamii/DaraPlasmoids"
+  },
+  "KPackageStructure": "Plasma/Applet",
+  "X-Plasma-API-Minimum-Version": "6.0"
+}
