@@ -322,7 +322,7 @@ Item {
                         }
                         Tile {
                             visible: full.cfg.showPrecip
-                            label: i18n("Precipitation"); accent: "#5aa0ff"
+                            label: i18n("Rain & snow"); accent: "#5aa0ff"
                             value: full.now ? full.now.precipitation + " " + full.precipLabel : ""
                             sub: wx ? i18n("Today %1 %2", wx.days[0].precip, full.precipLabel) : ""
                             RainDrops { anchors.fill: parent; run: full.run }

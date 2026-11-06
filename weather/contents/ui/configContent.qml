@@ -53,7 +53,7 @@ KCM.SimpleKCM {
         QQC2.CheckBox { text: i18n("UV index"); checked: cfg_showUV; onToggled: cfg_showUV = checked }
         QQC2.CheckBox { text: i18n("Pressure"); checked: cfg_showPressure; onToggled: cfg_showPressure = checked }
         QQC2.CheckBox { text: i18n("Visibility"); checked: cfg_showVisibility; onToggled: cfg_showVisibility = checked }
-        QQC2.CheckBox { text: i18n("Precipitation"); checked: cfg_showPrecip; onToggled: cfg_showPrecip = checked }
+        QQC2.CheckBox { text: i18n("Rain & snow"); checked: cfg_showPrecip; onToggled: cfg_showPrecip = checked }
         QQC2.CheckBox { text: i18n("Clouds"); checked: cfg_showClouds; onToggled: cfg_showClouds = checked }
     }
 }

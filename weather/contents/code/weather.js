@@ -49,6 +49,9 @@ function dayName(iso, i) {
     const d = new Date(+iso.substr(0, 4), +iso.substr(5, 2) - 1, +iso.substr(8, 2));
     return Qt.locale().dayName(d.getDay(), 1); // 1 = QLocale::ShortFormat
 }
+function dateShort(iso) { // "Nov 7"
+    return Qt.locale().monthName(+iso.substr(5, 2) - 1, 1) + " " + (+iso.substr(8, 2));
+}
 function duration(a, b) { const m = mins(b) - mins(a); return Math.floor(m / 60) + "h " + pad(m % 60) + "m"; }
 function compass(deg) { return ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(deg / 45) % 8]; }
 function uvLabel(u) { return u < 3 ? "Low" : u < 6 ? "Moderate" : u < 8 ? "High" : u < 11 ? "Very high" : "Extreme"; }

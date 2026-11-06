@@ -11,7 +11,8 @@ Flickable {
     property bool h24: true
 
     readonly property real colW: Kirigami.Units.gridUnit * 3.2
-    readonly property real curveTop: Kirigami.Units.gridUnit * 3.2
+    readonly property real dayRowH: Kirigami.Units.gridUnit * 1.4   // header row that names each day
+    readonly property real curveTop: dayRowH + Kirigami.Units.gridUnit * 3.2
     readonly property real curveH: Kirigami.Units.gridUnit * 4.2
     readonly property real tMin: hours.length ? Math.min.apply(null, hours.map(h => h.temp)) : 0
     readonly property real tMax: hours.length ? Math.max.apply(null, hours.map(h => h.temp)) : 1
@@ -93,8 +94,28 @@ Flickable {
             opacity: fl.reveal > (index + 1) / fl.hours.length ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 250 } }
 
+            readonly property bool newDay: index === 0 || modelData.time.substr(0, 10) !== fl.hours[index - 1].time.substr(0, 10)
+
+            Rectangle {   // day boundary: thin line from the header down through the whole column
+                visible: index > 0 && parent.newDay
+                x: 0; y: 4; width: 1.5; height: parent.height - 8; radius: 1
+                color: Qt.lighter(Kirigami.Theme.highlightColor, 1.6); opacity: 0.6
+            }
+            Rectangle {   // day pill: "Today" / "Sat · Nov 7" (extends right over the empty header row)
+                visible: parent.newDay
+                x: index === 0 ? 4 : 5; y: 2
+                width: pillText.implicitWidth + Kirigami.Units.largeSpacing; height: fl.dayRowH - 4
+                radius: height / 2
+                color: Qt.alpha(Kirigami.Theme.highlightColor, 0.35)
+                PlasmaComponents.Label {
+                    id: pillText
+                    anchors.centerIn: parent
+                    text: index === 0 ? i18n("Today") : W.dayName(modelData.time, index) + " · " + W.dateShort(modelData.time)
+                    font.bold: true; font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+                }
+            }
             PlasmaComponents.Label {
-                y: Kirigami.Units.smallSpacing
+                y: fl.dayRowH + Kirigami.Units.smallSpacing
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 text: index === 0 ? i18n("Now") : W.hourLabel(modelData.time, fl.h24)
@@ -103,7 +124,7 @@ Flickable {
                 opacity: index === 0 ? 1 : 0.85
             }
             Kirigami.Icon {
-                y: Kirigami.Units.gridUnit * 1.4
+                y: fl.dayRowH + Kirigami.Units.gridUnit * 1.4
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: Kirigami.Units.iconSizes.smallMedium; height: width
                 source: modelData.mono ? modelData.symbolic : modelData.icon

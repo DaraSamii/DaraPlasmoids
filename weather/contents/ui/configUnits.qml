@@ -39,7 +39,7 @@ KCM.SimpleKCM {
             onActivated: cfg_pressureUnit = currentIndex
         }
         QQC2.ComboBox {
-            Kirigami.FormData.label: i18n("Precipitation:")
+            Kirigami.FormData.label: i18n("Rain & snow amount:")
             model: [i18n("Millimetres"), i18n("Inches")]
             currentIndex: cfg_precipUnit
             onActivated: cfg_precipUnit = currentIndex

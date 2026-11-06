@@ -14,10 +14,10 @@ A detailed, animated weather widget for your panel. Add one per city (e.g. Montr
 - **Panel icon + temperature**, optional city name and unit letter. Tooltip shows condition and high/low. Click to open the popup.
 - **Animated hero scene** that follows the weather and time of day: sun with rotating rays, moon and twinkling stars, drifting clouds, rain, snow, fog and lightning.
 - **Plain-language summary**: "Rain expected around 3 p.m.", "Dry for the next 12 hours", or how much wind/humidity changes the feel.
-- **Next 12 / 24 / 48 hours**: scrollable strip with icons, a smooth temperature curve that draws itself in, and precipitation chance (Shift + wheel or drag to scroll sideways). Times read `2 a.m.`, `3 p.m.` (or 24-hour).
-- **3–7 day forecast** with animated high/low range bars.
+- **Next 12 / 24 / 48 hours**: scrollable strip with icons, a smooth temperature curve that draws itself in, day markers (Today, Sat · Nov 7) where a new day starts, and chance of rain (Shift + wheel or drag to scroll sideways). Times read `2 a.m.`, `3 p.m.` (or 24-hour).
+- **3–7 day forecast** with weekday + date and animated high/low range bars.
 - **Sun arc**: bold colored sunrise and sunset times, daylight length, and a pulsing sun showing where it is now.
-- **Visual details**: wind card (compass arrow, streaks that blow faster with stronger wind, gusts), humidity as a filling water droplet, rain drops for precipitation, colored gauges for UV, pressure, visibility and cloud cover.
+- **Visual details**: wind card (compass arrow, streaks that blow faster with stronger wind, gusts), humidity as a filling water droplet, rain drops for rain & snow, colored gauges for UV, pressure, visibility and cloud cover.
 - **Multiple places**: switch with chips in the popup, add with **+** (city search), remove with the trash button on the selected chip.
 - **Sources**: forecast model (Best match, GEM – Environment Canada, ECMWF, GFS, ICON, Météo-France, JMA) and the website opened by the globe button (Windy, Yr, Open-Meteo, Google Weather).
 - **Offline notice**: if a refresh fails you keep the last data with an "Offline — showing data from …" line.
@@ -30,7 +30,7 @@ Grouped into six pages:
 | Page | What you can change |
 |---|---|
 | **Places** | Saved cities for this widget, current city, city search |
-| **Units & Time** | Temperature (°C/°F), wind (km/h, mph, m/s, kn), pressure (hPa, inHg, mmHg), precipitation (mm/in), 12/24-hour clock, refresh interval |
+| **Units & Time** | Temperature (°C/°F), wind (km/h, mph, m/s, kn), pressure (hPa, inHg, mmHg), rain & snow amount (mm/in), 12/24-hour clock, refresh interval |
 | **Sources** | Forecast model, website opened by the globe button |
 | **Appearance** | Glass with blur / Glass / Plain, glass tint, animations on/off, popup size |
 | **Panel** | Icon, temperature, city name, unit letter |

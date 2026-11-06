@@ -18,7 +18,12 @@ RowLayout {
     Component.onCompleted: reveal = 1
     Behavior on reveal { NumberAnimation { duration: 900 + row.index * 120; easing.type: Easing.OutCubic } }
 
-    PlasmaComponents.Label { text: W.dayName(day.date, index); Layout.preferredWidth: Kirigami.Units.gridUnit * 3.6; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.05 }
+    ColumnLayout {
+        spacing: 0
+        Layout.preferredWidth: Kirigami.Units.gridUnit * 3.8
+        PlasmaComponents.Label { text: W.dayName(day.date, index); font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.05 }
+        PlasmaComponents.Label { text: W.dateShort(day.date); opacity: 0.7; font.pixelSize: Kirigami.Theme.smallFont.pixelSize }
+    }
     Kirigami.Icon { source: day.mono ? day.symbolic : day.icon; Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium; Layout.preferredHeight: Layout.preferredWidth }
     PlasmaComponents.Label {
         text: day.pop >= 10 ? day.pop + "%" : ""
