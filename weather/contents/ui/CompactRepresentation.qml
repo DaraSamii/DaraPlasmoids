@@ -14,7 +14,7 @@ MouseArea {
     Layout.minimumWidth: grid.implicitWidth
     Layout.minimumHeight: grid.implicitHeight
     hoverEnabled: true
-    onClicked: Plasmoid.expanded = !Plasmoid.expanded
+    onClicked: weather.expanded = !weather.expanded
 
     // soft hover highlight
     Rectangle {

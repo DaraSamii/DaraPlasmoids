@@ -33,7 +33,7 @@ Item {
                 kind: full.now ? full.now.kind : "cloudy"
                 isDay: full.now ? full.now.is_day === 1 : true
                 clouds: full.now ? full.now.clouds : 3
-                animate: Plasmoid.configuration.animations && Plasmoid.expanded
+                animate: Plasmoid.configuration.animations && weather.expanded
             }
 
             RowLayout {

@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import org.kde.plasma.plasmoid
 import org.kde.plasma.components as PlasmaComponents
 import org.kde.kirigami as Kirigami
 
@@ -33,10 +32,7 @@ Rectangle {
     }
     function replay() { opacity = 0; slide.y = 24; intro.restart(); }
     Component.onCompleted: replay()
-    Connections {
-        target: Plasmoid
-        function onExpandedChanged() { if (Plasmoid.expanded) card.replay(); }
-    }
+    onVisibleChanged: if (visible) replay() // popup opened
 
     ColumnLayout {
         id: col
