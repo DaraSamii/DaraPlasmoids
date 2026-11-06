@@ -69,13 +69,37 @@ function removePlace(s, i) { // never removes the last place
 }
 
 // ---- Open-Meteo ----
-function forecastUrl(p, imperial) {
+// [key, label] — all served by Open-Meteo, which blends national weather-service models
+const MODELS = [
+    ["best_match", "Best match (automatic)"], ["gem_seamless", "GEM — Environment Canada"],
+    ["ecmwf_ifs025", "ECMWF IFS — Europe"], ["gfs_seamless", "GFS — NOAA (USA)"],
+    ["icon_seamless", "ICON — DWD (Germany)"], ["meteofrance_seamless", "Météo-France"],
+    ["jma_seamless", "JMA — Japan"]
+];
+// [key, label, url template] — where "open forecast online" goes
+const SITES = [
+    ["windy", "Windy", "https://www.windy.com/{lat}/{lon}?{lat},{lon},8"],
+    ["yr", "Yr (MET Norway)", "https://www.yr.no/en/forecast/daily-table/{lat},{lon}"],
+    ["openmeteo", "Open-Meteo", "https://open-meteo.com/en/docs?latitude={lat}&longitude={lon}"],
+    ["google", "Google Weather", "https://www.google.com/search?q=weather+{name}"]
+];
+function modelLabel(key) { const m = MODELS.find(x => x[0] === key); return m ? m[1] : key; }
+function siteLabel(key) { return (SITES.find(x => x[0] === key) || SITES[0])[1]; }
+function siteUrl(key, p) {
+    return (SITES.find(x => x[0] === key) || SITES[0])[2].split("{lat}").join(p.lat).split("{lon}").join(p.lon)
+        .split("{name}").join(encodeURIComponent(p.name));
+}
+// null-safe number formatting: models differ in what they provide
+function num(v, d) { return v === null || v === undefined ? "–" : (d ? (+v).toFixed(d) : Math.round(v)); }
+
+function forecastUrl(p, imperial, model) {
     return "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon
         + "&current=temperature_2m,apparent_temperature,relative_humidity_2m,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m"
         + "&hourly=temperature_2m,precipitation_probability,weather_code,is_day,visibility,uv_index"
         + "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,precipitation_sum"
         + "&timezone=auto&forecast_days=7&temperature_unit=" + (imperial ? "fahrenheit" : "celsius")
-        + "&wind_speed_unit=" + (imperial ? "mph" : "kmh") + "&precipitation_unit=" + (imperial ? "inch" : "mm");
+        + "&wind_speed_unit=" + (imperial ? "mph" : "kmh") + "&precipitation_unit=" + (imperial ? "inch" : "mm")
+        + (model && model !== "best_match" ? "&models=" + model : "");
 }
 
 // Open-Meteo times are location-local ISO strings; we never convert them, only slice.

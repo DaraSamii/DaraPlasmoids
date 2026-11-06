@@ -13,6 +13,10 @@ KCM.SimpleKCM {
     property int cfg_refreshMin
     property bool cfg_animations
     property bool cfg_showCity
+    property string cfg_model
+    property string cfg_site
+    property string cfg_modelDefault
+    property string cfg_siteDefault
     // required by the config system; unused
     property string cfg_placesDefault
     property int cfg_placeIndexDefault
@@ -47,6 +51,24 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Add:")
             Layout.preferredWidth: Kirigami.Units.gridUnit * 18
             onPicked: place => { const r = W.addPlace(cfg_places, place); cfg_places = r.json; cfg_placeIndex = r.index; }
+        }
+
+        Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Sources") }
+        QQC2.ComboBox {
+            Kirigami.FormData.label: i18n("Forecast model:")
+            model: W.MODELS.map(m => m[1])
+            currentIndex: Math.max(0, W.MODELS.findIndex(m => m[0] === cfg_model))
+            onActivated: cfg_model = W.MODELS[currentIndex][0]
+        }
+        QQC2.Label {
+            text: i18n("Data via Open-Meteo. Some models don't provide UV, visibility or rain chance (shown as –).")
+            wrapMode: Text.Wrap; opacity: 0.7; Layout.maximumWidth: Kirigami.Units.gridUnit * 20
+        }
+        QQC2.ComboBox {
+            Kirigami.FormData.label: i18n("Open website:")
+            model: W.SITES.map(m => m[1])
+            currentIndex: Math.max(0, W.SITES.findIndex(m => m[0] === cfg_site))
+            onActivated: cfg_site = W.SITES[currentIndex][0]
         }
 
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Display") }

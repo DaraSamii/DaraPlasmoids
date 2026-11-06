@@ -18,18 +18,18 @@ RowLayout {
     Component.onCompleted: reveal = 1
     Behavior on reveal { NumberAnimation { duration: 900 + row.index * 120; easing.type: Easing.OutCubic } }
 
-    PlasmaComponents.Label { text: W.dayName(day.date, index); Layout.preferredWidth: Kirigami.Units.gridUnit * 3.2; font.bold: index === 0 }
+    PlasmaComponents.Label { text: W.dayName(day.date, index); Layout.preferredWidth: Kirigami.Units.gridUnit * 3.6; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.05 }
     Kirigami.Icon { source: day.icon; Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium; Layout.preferredHeight: Layout.preferredWidth }
     PlasmaComponents.Label {
         text: day.pop >= 10 ? day.pop + "%" : ""
-        color: "#4aa3ff"; font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+        color: "#4aa3ff"; font.bold: true
         Layout.preferredWidth: Kirigami.Units.gridUnit * 2
     }
-    PlasmaComponents.Label { text: Math.round(day.min) + "°"; opacity: 0.65; horizontalAlignment: Text.AlignRight; Layout.preferredWidth: Kirigami.Units.gridUnit * 1.8 }
+    PlasmaComponents.Label { text: Math.round(day.min) + "°"; font.weight: Font.DemiBold; font.pixelSize: Kirigami.Units.gridUnit * 1.05; opacity: 0.8; horizontalAlignment: Text.AlignRight; Layout.preferredWidth: Kirigami.Units.gridUnit * 1.8 }
     Item {
         id: track
         Layout.fillWidth: true
-        Layout.preferredHeight: 6
+        Layout.preferredHeight: 8
         Rectangle { anchors.fill: parent; radius: height / 2; color: Qt.alpha(Kirigami.Theme.textColor, 0.12) }
         Rectangle {
             readonly property real span: Math.max(1, row.gmax - row.gmin)
@@ -44,5 +44,5 @@ RowLayout {
             }
         }
     }
-    PlasmaComponents.Label { text: Math.round(day.max) + "°"; font.bold: true; Layout.preferredWidth: Kirigami.Units.gridUnit * 1.8 }
+    PlasmaComponents.Label { text: Math.round(day.max) + "°"; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.15; Layout.preferredWidth: Kirigami.Units.gridUnit * 1.8 }
 }

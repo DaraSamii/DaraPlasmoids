@@ -34,13 +34,14 @@ PlasmoidItem {
                 error = i18n("Could not load weather (%1)", e.message);
             }
         };
-        xhr.open("GET", W.forecastUrl(place, imperial));
+        xhr.open("GET", W.forecastUrl(place, imperial, cfg.model));
         xhr.send();
     }
 
     // wipe stale data when switching place/units so we never show Tehran's weather under "Montreal"
     onPlaceChanged: { wx = null; load(); }
     onImperialChanged: { wx = null; load(); }
+    Connections { target: root.cfg; function onModelChanged() { root.wx = null; root.load(); } }
     Component.onCompleted: load()
 
     Timer {

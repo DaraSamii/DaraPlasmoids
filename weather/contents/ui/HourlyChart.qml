@@ -98,9 +98,9 @@ Flickable {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 text: index === 0 ? i18n("Now") : W.hourLabel(modelData.time, fl.h24)
-                font.bold: index === 0
-                font.pixelSize: Kirigami.Theme.smallFont.pixelSize
-                opacity: index === 0 ? 1 : 0.7
+                font.bold: true
+                color: index === 0 ? Qt.lighter(Kirigami.Theme.highlightColor, 1.6) : Kirigami.Theme.textColor
+                opacity: index === 0 ? 1 : 0.85
             }
             Kirigami.Icon {
                 y: Kirigami.Units.gridUnit * 1.4
@@ -114,6 +114,7 @@ Flickable {
                 horizontalAlignment: Text.AlignHCenter
                 text: Math.round(modelData.temp) + "°"
                 font.bold: true
+                font.pixelSize: Kirigami.Units.gridUnit * 1.15
             }
             PlasmaComponents.Label {
                 y: fl.curveTop + fl.curveH + Kirigami.Units.smallSpacing
@@ -122,7 +123,7 @@ Flickable {
                 text: modelData.pop >= 10 ? modelData.pop + "%" : "–"
                 color: modelData.pop >= 10 ? "#4aa3ff" : Kirigami.Theme.textColor
                 opacity: modelData.pop >= 10 ? 1 : 0.35
-                font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+                font.bold: true
             }
         }
     }

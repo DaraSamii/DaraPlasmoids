@@ -40,10 +40,10 @@ Rectangle {
         spacing: Kirigami.Units.smallSpacing
         PlasmaComponents.Label {
             text: card.title.toUpperCase()
-            font.pixelSize: Kirigami.Theme.smallFont.pixelSize
-            font.letterSpacing: 1
+            font.pixelSize: Kirigami.Units.gridUnit * 0.95
+            font.letterSpacing: 1.5
             font.bold: true
-            opacity: 0.6
+            color: Qt.lighter(Kirigami.Theme.highlightColor, 1.6)
         }
         ColumnLayout { id: inner; Layout.fillWidth: true; spacing: Kirigami.Units.smallSpacing }
     }

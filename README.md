@@ -10,13 +10,15 @@ A detailed, animated weather widget for your panel. Add one per city (e.g. Montr
 
 ### Features
 
-- **Panel icon + temperature**, with the city name optionally shown (handy with several widgets). Tooltip shows condition and high/low.
+- **Panel icon + temperature**, with the city name optionally shown (handy with several widgets). Tooltip shows condition and high/low. Click to open the popup.
 - **Animated hero scene** that follows the weather and time of day: sun with rotating rays, moon and twinkling stars, drifting clouds, rain, snow, fog and lightning.
 - **Next 24 hours**: scrollable strip with icons, a smooth temperature curve that draws itself in, and precipitation chance (Shift + wheel or drag to scroll sideways).
 - **7-day forecast** with animated high/low range bars.
-- **Sun arc**: sunrise, sunset, daylight length and the sun's current position.
-- **Details**: wind (with direction arrow and gusts), humidity, UV index, pressure, visibility, precipitation, cloud cover.
-- **Multiple places**: switch with chips in the popup, add with the **+** button (city search), manage in settings.
+- **Sun arc**: bold colored sunrise and sunset times, daylight length, and a pulsing sun showing where it is now.
+- **Visual details**: wind card (compass, streaks that blow faster with stronger wind, gusts), humidity as a filling water droplet, rain drops for precipitation, and colored gauges for UV, pressure, visibility and cloud cover.
+- **Multiple places**: switch with chips in the popup, add with **+** (city search), remove with the trash button on the selected chip (or in settings).
+- **Sources**: pick the forecast model in settings — Best match, GEM (Environment Canada), ECMWF, GFS (NOAA), ICON (DWD), Météo-France or JMA.
+- **Open a weather website**: the globe button / "Open full forecast" button opens Windy, Yr, Open-Meteo or Google Weather (your choice in settings) at the selected city.
 - Metric / imperial, 12 / 24-hour clock, refresh interval, animations on/off.
 - Uses your Plasma theme (colors, icons, fonts) and works in light and dark themes.
 
@@ -46,7 +48,7 @@ Each widget stores its own list and selection, so they never interfere.
 
 ### Data
 
-Forecast and geocoding come from [Open-Meteo](https://open-meteo.com) — free, no API key. Open-Meteo's free tier is for non-commercial use. Times are shown in the city's local time.
+Forecast and geocoding come from [Open-Meteo](https://open-meteo.com) — free, no API key, non-commercial use. Open-Meteo blends national weather-service models; the *Forecast model* setting picks which one. Some models don't provide UV, visibility, gusts or rain chance — those show as `–`. Times are shown in the city's local time.
 
 ### Layout
 

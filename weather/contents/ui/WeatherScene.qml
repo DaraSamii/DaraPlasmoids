@@ -50,13 +50,13 @@ Item {
     // sun / moon
     Item {
         id: orb
-        x: s.width * 0.74; y: s.height * 0.12
-        width: 64; height: 64
+        x: s.width * 0.6; y: s.height * 0.16
+        width: 56; height: 56
         opacity: s.sunVisible ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: 700 } }
         Rectangle {   // glow
             anchors.centerIn: parent
-            width: 150; height: 150; radius: 75
+            width: 110; height: 110; radius: 55
             color: s.isDay ? "#ffe9a0" : "#cfd9ff"
             opacity: 0.18
             SequentialAnimation on scale {
@@ -75,15 +75,18 @@ Item {
                     required property int index
                     width: 3; height: 14; radius: 1.5
                     color: "#ffe28a"; opacity: 0.55
-                    x: orb.width / 2 - width / 2; y: -18
-                    transform: Rotation { origin.x: 1.5; origin.y: 50; angle: index * 30 }
+                    x: orb.width / 2 - width / 2; y: -16
+                    transform: Rotation { origin.x: 1.5; origin.y: 44; angle: index * 30 }
                 }
             }
         }
         Rectangle {
-            anchors.fill: parent; radius: 32
+            anchors.fill: parent; radius: width / 2
             color: s.isDay ? "#ffd75a" : "#eef1fa"
-            Rectangle { visible: !s.isDay; x: 38; y: 8; width: 54; height: 54; radius: 27; color: s.palette[0] } // crescent cut-out
+            Repeater {   // moon craters
+                model: s.isDay ? [] : [[10, 12, 12], [30, 26, 9], [16, 36, 7]]
+                Rectangle { required property var modelData; x: modelData[0]; y: modelData[1]; width: modelData[2]; height: width; radius: width / 2; color: "#c9d0e3" }
+            }
         }
     }
 
