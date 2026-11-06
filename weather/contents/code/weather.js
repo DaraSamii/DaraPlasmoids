@@ -124,19 +124,21 @@ function normalize(r, nHours) {
     let i = h.time.findIndex(t => t.substr(0, 13) === c.time.substr(0, 13));
     if (i < 0) i = 0;
     const hours = [];
-    for (let k = i; k < Math.min(i + nHours, h.time.length); k++)
+    for (let k = i; k < Math.min(i + nHours, h.time.length); k++) {
+        if (h.temperature_2m[k] === null) break; // some models (e.g. Météo-France) stop after ~4 days
         hours.push(Object.assign({ time: h.time[k], temp: h.temperature_2m[k], pop: h.precipitation_probability[k] ?? null },
                                  info(h.weather_code[k], h.is_day[k])));
-    const days = d.time.map((t, k) => Object.assign({
+    }
+    const days = d.time.map((t, k) => k).filter(k => d.temperature_2m_max[k] !== null && d.temperature_2m_min[k] !== null).map(k => { const t = d.time[k]; return Object.assign({
         date: t, max: d.temperature_2m_max[k], min: d.temperature_2m_min[k], pop: d.precipitation_probability_max[k] || 0,
         sunrise: d.sunrise[k], sunset: d.sunset[k], uv: d.uv_index_max[k], precip: d.precipitation_sum[k]
-    }, info(d.weather_code[k], 1)));
+    }, info(d.weather_code[k], 1)); });
     const now = Object.assign({}, c, info(c.weather_code, c.is_day), { visibility: h.visibility[i], uv: h.uv_index[i] });
     return { now: now, hours: hours, days: days, units: r.current_units };
 }
 
 // One plain-language line: what to expect next (glanceable "so what?" instead of making people read charts)
-function summary(wx, h24) {
+function summary(wx, h24, fahrenheit) {
     const now = wx.now, hrs = wx.hours.slice(0, 12);
     const wet = k => k === "rain" || k === "snow" || k === "storm";
     const noun = k => k === "snow" ? "Snow" : k === "storm" ? "Thunderstorms" : "Rain";
@@ -147,7 +149,7 @@ function summary(wx, h24) {
     const j = hrs.findIndex(h => wet(h.kind));
     if (j > 0) return noun(hrs[j].kind) + " expected around " + hourLabel(hrs[j].time, h24);
     const d = now.apparent_temperature - now.temperature_2m;
-    if (Math.abs(d) >= 3) return "Feels " + Math.abs(Math.round(d)) + "° " + (d < 0 ? "colder" : "warmer") + " than the actual temperature";
+    if (Math.abs(d) >= (fahrenheit ? 5 : 3)) return "Feels " + Math.abs(Math.round(d)) + "° " + (d < 0 ? "colder" : "warmer") + " than the actual temperature";
     return "Dry for the next 12 hours";
 }
 
@@ -165,4 +167,10 @@ function moon(date, lat) {
     return { phase: f, age: age, illum: Math.round((1 - Math.cos(2 * Math.PI * f)) / 2 * 100), name: name,
              mirror: lat < 0, // southern hemisphere sees the phase mirrored
              nextFull: fmt(until(0.5)), nextNew: fmt(until(0)) };
+}
+
+// Geocoder only matches names in the requested language, so pick it from the script the user typed.
+function searchLang(q) {
+    return /[\u0600-\u06FF]/.test(q) ? "fa" : /[\u0400-\u04FF]/.test(q) ? "ru" : /[\u4E00-\u9FFF]/.test(q) ? "zh"
+        : /[\u3040-\u30FF]/.test(q) ? "ja" : /[\uAC00-\uD7AF]/.test(q) ? "ko" : /[\u0900-\u097F]/.test(q) ? "hi" : "en";
 }

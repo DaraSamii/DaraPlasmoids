@@ -34,6 +34,9 @@ Item {
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
     Kirigami.Theme.inherit: bg === 2
 
+    // plain mode: solid theme colour instead of the sky
+    Rectangle { anchors.fill: parent; visible: full.bg === 2; color: Kirigami.Theme.backgroundColor }
+
     // ---------- glass background: sky, blurred under the content, plus a contrast scrim ----------
     WeatherScene {
         id: scene
@@ -154,7 +157,7 @@ Item {
         PlasmaComponents.Label {
             visible: full.cfg.showSummary && full.now !== null
             Layout.fillWidth: true; Layout.margins: Kirigami.Units.largeSpacing
-            text: full.now ? W.summary(wx, full.cfg.clock24) : ""
+            text: full.now ? W.summary(wx, full.cfg.clock24, full.cfg.tempUnit === 1) : ""
             font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.1
             wrapMode: Text.Wrap
         }
@@ -224,6 +227,7 @@ Item {
             Layout.fillWidth: true; Layout.fillHeight: true
             Item { Layout.fillHeight: true }
             QQC2.BusyIndicator { visible: weather.loading; running: visible; Layout.alignment: Qt.AlignHCenter }
+            PlasmaComponents.Label { visible: weather.place === null; text: i18n("No place selected — click + to add a city."); Layout.alignment: Qt.AlignHCenter; font.bold: true }
             PlasmaComponents.Label { visible: weather.error !== ""; text: weather.error; Layout.alignment: Qt.AlignHCenter; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true }
             PlasmaComponents.Button { visible: weather.error !== ""; text: i18n("Retry"); icon.name: "view-refresh"; onClicked: weather.load(); Layout.alignment: Qt.AlignHCenter }
             Item { Layout.fillHeight: true }
@@ -254,7 +258,7 @@ Item {
 
                 Card {
                     visible: full.cfg.showHourly
-                    title: i18n("Next %1 hours", full.cfg.hoursCount); order: 0
+                    title: i18n("Next %1 hours", full.wx ? full.wx.hours.length : full.cfg.hoursCount); order: 0
                     Layout.leftMargin: Kirigami.Units.smallSpacing; Layout.rightMargin: Kirigami.Units.smallSpacing
                     RowLayout {
                         Layout.fillWidth: true
@@ -292,7 +296,7 @@ Item {
                 }
                 Card {
                     visible: full.cfg.showDaily
-                    title: i18n("%1-day forecast", full.cfg.daysCount); order: 1
+                    title: i18n("%1-day forecast", full.days.length); order: 1
                     Layout.leftMargin: Kirigami.Units.smallSpacing; Layout.rightMargin: Kirigami.Units.smallSpacing
                     Repeater {
                         model: full.days

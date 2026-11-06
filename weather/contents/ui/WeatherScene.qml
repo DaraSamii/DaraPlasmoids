@@ -98,7 +98,7 @@ Item {
             readonly property real sz: 0.8 + (index % 3) * 0.3
             y: s.heroH * (0.05 + ((index * 29) % 55) / 100)
             width: 120 * sz; height: 44 * sz
-            opacity: s.kind === "clear" ? 0.5 : (s.kind === "cloudy" ? 0.8 : 0.55)
+            opacity: s.kind === "clear" ? 0.3 : (s.kind === "cloudy" ? 0.55 : 0.4)   // low enough that white text on top stays readable
             Repeater {
                 model: [[0, 14, 70, 30], [26, 0, 56, 44], [62, 12, 58, 30]]
                 Rectangle {

@@ -16,8 +16,9 @@ Rectangle {
     readonly property bool glass: Plasmoid.configuration.backgroundStyle < 2
     readonly property real a: Plasmoid.configuration.glassOpacity / 100
     radius: Kirigami.Units.largeSpacing * 1.5
-    color: glass ? Qt.rgba(1, 1, 1, a) : Qt.alpha(Kirigami.Theme.textColor, 0.06)
-    border.color: glass ? Qt.rgba(1, 1, 1, 0.25) : Qt.alpha(Kirigami.Theme.textColor, 0.08)
+    readonly property color fg: Kirigami.Theme.textColor
+    color: glass ? Qt.rgba(1, 1, 1, a) : Qt.rgba(fg.r, fg.g, fg.b, 0.07)
+    border.color: glass ? Qt.rgba(1, 1, 1, 0.25) : Qt.rgba(fg.r, fg.g, fg.b, 0.12)
     border.width: 1
 
     Rectangle {   // glass sheen: bright top edge fading out

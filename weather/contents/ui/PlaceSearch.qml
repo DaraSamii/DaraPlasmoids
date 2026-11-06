@@ -32,7 +32,7 @@ ColumnLayout {
                 status = i18n("Search failed (%1)", e.message);
             }
         };
-        xhr.open("GET", "https://geocoding-api.open-meteo.com/v1/search?count=6&language=en&name=" + encodeURIComponent(q.trim()));
+        xhr.open("GET", "https://geocoding-api.open-meteo.com/v1/search?count=6&language=" + W.searchLang(q) + "&name=" + encodeURIComponent(q.trim()));
         xhr.send();
     }
 
