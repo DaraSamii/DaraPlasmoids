@@ -22,7 +22,8 @@ Flickable {
     }))
     property real reveal: 0
 
-    implicitHeight: curveTop + curveH + Kirigami.Units.gridUnit * 1.4
+    readonly property real barH: Kirigami.Units.gridUnit * 2
+    implicitHeight: curveTop + curveH + Kirigami.Units.gridUnit * 0.6 + barH + Kirigami.Units.gridUnit * 1.5
     contentWidth: hours.length * colW
     contentHeight: height
     flickableDirection: Flickable.HorizontalFlick
@@ -137,13 +138,28 @@ Flickable {
                 font.bold: true
                 font.pixelSize: Kirigami.Units.gridUnit * 1.15
             }
+            readonly property bool hasPop: modelData.pop !== null
+            readonly property real pop: hasPop ? modelData.pop : 0
+            Rectangle {   // rain-chance bar: fills up with the percentage
+                id: track
+                x: parent.width / 2 - width / 2
+                y: fl.curveTop + fl.curveH + Kirigami.Units.gridUnit * 0.6
+                width: 14; height: fl.barH; radius: 7
+                color: Qt.alpha("#4aa3ff", 0.18)
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    width: parent.width; radius: 7
+                    height: Math.max(parent.pop > 0 ? 6 : 0, track.height * parent.parent.pop / 100 * fl.reveal)
+                    color: "#4aa3ff"
+                }
+            }
             PlasmaComponents.Label {
-                y: fl.curveTop + fl.curveH + Kirigami.Units.smallSpacing
+                y: track.y + track.height + Kirigami.Units.smallSpacing
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                text: modelData.pop >= 10 ? modelData.pop + "%" : "–"
-                color: modelData.pop >= 10 ? "#4aa3ff" : Kirigami.Theme.textColor
-                opacity: modelData.pop >= 10 ? 1 : 0.35
+                text: parent.hasPop ? Math.round(parent.pop) + "%" : "–"
+                color: parent.pop >= 30 ? "#6ec1ff" : Kirigami.Theme.textColor
+                opacity: parent.pop >= 30 ? 1 : 0.75
                 font.bold: true
             }
         }

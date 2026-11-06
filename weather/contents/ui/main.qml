@@ -54,7 +54,7 @@ PlasmoidItem {
 
     Plasmoid.icon: wx ? wx.now.icon : "weather-none-available"
     toolTipMainText: place ? place.name + (wx ? " · " + Math.round(wx.now.temperature_2m) + "°" : "") : ""
-    toolTipSubText: wx ? wx.now.text + "\n" + i18n("H %1°  L %2°", Math.round(wx.days[0].max), Math.round(wx.days[0].min)) : error
+    toolTipSubText: wx ? wx.now.text + "\n" + i18n("↑ %1°  ↓ %2°", Math.round(wx.days[0].max), Math.round(wx.days[0].min)) : error
 
     compactRepresentation: CompactRepresentation { weather: root }
     fullRepresentation: FullRepresentation { weather: root }

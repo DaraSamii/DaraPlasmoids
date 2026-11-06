@@ -18,6 +18,8 @@ KCM.SimpleKCM {
     property int cfg_daysCountDefault
     property bool cfg_showSun
     property bool cfg_showSunDefault
+    property bool cfg_showMoon
+    property bool cfg_showMoonDefault
     property bool cfg_showWind
     property bool cfg_showWindDefault
     property bool cfg_showHumidity
@@ -47,6 +49,7 @@ KCM.SimpleKCM {
         QQC2.CheckBox { text: i18n("Daily forecast"); checked: cfg_showDaily; onToggled: cfg_showDaily = checked }
         QQC2.SpinBox { Kirigami.FormData.label: i18n("Days to show:"); from: 3; to: 7; value: cfg_daysCount; onValueModified: cfg_daysCount = value }
         QQC2.CheckBox { text: i18n("Sunrise and sunset"); checked: cfg_showSun; onToggled: cfg_showSun = checked }
+        QQC2.CheckBox { text: i18n("Moon phase"); checked: cfg_showMoon; onToggled: cfg_showMoon = checked }
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Detail cards") }
         QQC2.CheckBox { Kirigami.FormData.label: i18n("Show:"); text: i18n("Wind"); checked: cfg_showWind; onToggled: cfg_showWind = checked }
         QQC2.CheckBox { text: i18n("Humidity"); checked: cfg_showHumidity; onToggled: cfg_showHumidity = checked }

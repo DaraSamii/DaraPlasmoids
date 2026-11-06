@@ -21,6 +21,7 @@ Item {
     readonly property string windLabel: W.UNITS.wind[cfg.windUnit][0]
     readonly property string precipLabel: W.UNITS.precip[cfg.precipUnit][0]
     readonly property bool miles: cfg.windUnit === 1
+    readonly property var moonInfo: wx && weather.place ? W.moon(new Date(), weather.place.lat) : null  // re-evaluated on each data refresh
     property bool adding: false
     function openSite() { Qt.openUrlExternally(W.siteUrl(cfg.site, weather.place)); }
 
@@ -43,6 +44,9 @@ Item {
         isDay: full.now ? full.now.is_day === 1 : true
         clouds: full.now ? full.now.clouds : 3
         animate: full.run
+        moonPhase: full.moonInfo ? full.moonInfo.phase : 0.5
+        moonMirror: full.moonInfo ? full.moonInfo.mirror : false
+        moonIllum: full.moonInfo ? full.moonInfo.illum : 100
     }
     ShaderEffectSource { id: sceneSrc; sourceItem: scene; live: true; visible: false }
     Item {
@@ -138,7 +142,8 @@ Item {
                     PlasmaComponents.Label { text: full.now ? full.now.text : ""; color: "white"; font.pixelSize: Kirigami.Units.gridUnit * 1.4; font.bold: true }
                     PlasmaComponents.Label {
                         font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.05
-                        text: full.now ? i18n("H %1°  L %2°  ·  Feels %3°", Math.round(wx.days[0].max), Math.round(wx.days[0].min), Math.round(full.now.apparent_temperature)) : ""
+                        textFormat: Text.StyledText
+                        text: full.now ? i18n("<font color=\"#ffb84a\">↑</font> %1°   <font color=\"#6ec1ff\">↓</font> %2°   ·   Feels %3°", Math.round(wx.days[0].max), Math.round(wx.days[0].min), Math.round(full.now.apparent_temperature)) : ""
                         color: "white"; opacity: 0.95
                     }
                 }
@@ -231,11 +236,17 @@ Item {
             Layout.fillWidth: true; Layout.fillHeight: true
             contentWidth: availableWidth
 
-            // content grows as data/cards appear; always start at the top (the scroll area tried to follow focus)
-            function toTop() { if (contentItem) contentItem.contentY = 0; }
-            Connections { target: full; function onNowChanged() { Qt.callLater(sv.toTop) } }
-            Connections { target: full.weather; function onExpandedChanged() { if (full.weather.expanded) Qt.callLater(sv.toTop) } }
-            Component.onCompleted: Qt.callLater(toTop)
+            // The page grows as data/cards appear and the scroll area drifted down with it.
+            // Hold the view at the top until the user scrolls themselves.
+            property bool touched: false
+            function toTop() { touched = false; if (contentItem) contentItem.contentY = 0; }
+            Connections {
+                target: sv.contentItem
+                function onContentHeightChanged() { if (!sv.touched) sv.contentItem.contentY = 0; }
+                function onMovingChanged() { if (sv.contentItem.moving && sv.contentItem.contentY > 0) sv.touched = true; }
+            }
+            Connections { target: full.weather; function onExpandedChanged() { if (full.weather.expanded) sv.toTop() } }
+            Connections { target: full; function onNowChanged() { sv.toTop() } }
 
             ColumnLayout {
                 width: sv.availableWidth
@@ -245,6 +256,7 @@ Item {
                     visible: full.cfg.showHourly
                     title: i18n("Next %1 hours", full.cfg.hoursCount); order: 0
                     Layout.leftMargin: Kirigami.Units.smallSpacing; Layout.rightMargin: Kirigami.Units.smallSpacing
+                    PlasmaComponents.Label { text: i18n("Blue bars: chance of rain"); opacity: 0.75; font.pixelSize: Kirigami.Theme.smallFont.pixelSize }
                     HourlyChart { Layout.fillWidth: true; hours: full.wx ? full.wx.hours : []; h24: full.cfg.clock24 }
                 }
                 Card {
@@ -272,9 +284,78 @@ Item {
                     }
                 }
                 Card {
+                    visible: full.cfg.showMoon && full.moonInfo !== null
+                    title: i18n("Moon"); order: 3
+                    Layout.leftMargin: Kirigami.Units.smallSpacing; Layout.rightMargin: Kirigami.Units.smallSpacing
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Kirigami.Units.largeSpacing
+                        MoonDisc {
+                            Layout.preferredWidth: Kirigami.Units.gridUnit * 5; Layout.preferredHeight: Layout.preferredWidth
+                            phase: full.moonInfo ? full.moonInfo.phase : 0.5
+                            mirror: full.moonInfo ? full.moonInfo.mirror : false
+                        }
+                        ColumnLayout {
+                            spacing: 0
+                            PlasmaComponents.Label { text: full.moonInfo ? full.moonInfo.name : ""; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.6 }
+                            PlasmaComponents.Label { text: full.moonInfo ? i18n("%1% illuminated", full.moonInfo.illum) : ""; font.bold: true; color: "#cfd9ff"; font.pixelSize: Kirigami.Units.gridUnit * 1.1 }
+                            PlasmaComponents.Label { text: full.moonInfo ? i18n("Day %1 of 29.5", Math.floor(full.moonInfo.age) + 1) : ""; opacity: 0.8; font.weight: Font.DemiBold }
+                        }
+                    }
+                    Item {   // lunar cycle: marker sweeps from new → full → new
+                        id: cycle
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: Kirigami.Units.gridUnit * 1.2
+                        Rectangle {
+                            anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter }
+                            height: 8; radius: 4
+                            gradient: Gradient {
+                                orientation: Gradient.Horizontal
+                                GradientStop { position: 0; color: "#2b3550" }
+                                GradientStop { position: 0.5; color: "#eef1fa" }
+                                GradientStop { position: 1; color: "#2b3550" }
+                            }
+                            border.color: Qt.rgba(1, 1, 1, 0.25)
+                        }
+                        Rectangle {
+                            property real f: full.moonInfo ? full.moonInfo.phase : 0
+                            Behavior on f { NumberAnimation { duration: 1400; easing.type: Easing.OutBack } }
+                            x: f * (cycle.width - width); anchors.verticalCenter: parent.verticalCenter
+                            width: 16; height: 16; radius: 8; color: "#ffd75a"; border.color: "white"; border.width: 2
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Repeater {
+                            model: [i18n("New"), i18n("Full"), i18n("New")]
+                            PlasmaComponents.Label {
+                                required property var modelData
+                                required property int index
+                                text: modelData; opacity: 0.7; font.bold: true; font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+                                Layout.fillWidth: true
+                                horizontalAlignment: [Text.AlignLeft, Text.AlignHCenter, Text.AlignRight][index]
+                            }
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.topMargin: Kirigami.Units.smallSpacing
+                        Repeater {
+                            model: full.moonInfo ? [[i18n("NEXT FULL MOON"), full.moonInfo.nextFull], [i18n("NEXT NEW MOON"), full.moonInfo.nextNew]] : []
+                            ColumnLayout {
+                                required property var modelData
+                                Layout.fillWidth: true
+                                spacing: 0
+                                PlasmaComponents.Label { text: modelData[0]; font.bold: true; font.letterSpacing: 1; color: "#cfd9ff"; font.pixelSize: Kirigami.Theme.smallFont.pixelSize }
+                                PlasmaComponents.Label { text: modelData[1]; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.4 }
+                            }
+                        }
+                    }
+                }
+                Card {
                     visible: full.cfg.showWind || full.cfg.showHumidity || full.cfg.showUV || full.cfg.showPressure
                              || full.cfg.showVisibility || full.cfg.showPrecip || full.cfg.showClouds
-                    title: i18n("Details"); order: 3
+                    title: i18n("Details"); order: 4
                     Layout.leftMargin: Kirigami.Units.smallSpacing; Layout.rightMargin: Kirigami.Units.smallSpacing
                     WindCard {
                         visible: full.cfg.showWind

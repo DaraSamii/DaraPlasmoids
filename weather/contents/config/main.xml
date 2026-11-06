@@ -38,6 +38,7 @@
     <entry name="showDaily" type="Bool"><default>true</default></entry>
     <entry name="daysCount" type="Int"><default>7</default></entry>
     <entry name="showSun" type="Bool"><default>true</default></entry>
+    <entry name="showMoon" type="Bool"><default>true</default></entry>
     <entry name="showWind" type="Bool"><default>true</default></entry>
     <entry name="showHumidity" type="Bool"><default>true</default></entry>
     <entry name="showUV" type="Bool"><default>true</default></entry>

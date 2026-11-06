@@ -8,6 +8,9 @@ Item {
     property bool isDay: true
     property int clouds: 0          // 0..5
     property bool animate: true
+    property real moonPhase: 0.5
+    property bool moonMirror: false
+    property int moonIllum: 100
     property real heroH: height      // sky elements live in the top part; rain/snow fall through everything
 
     readonly property bool run: animate && visible && Kirigami.Units.longDuration > 0
@@ -60,7 +63,7 @@ Item {
             anchors.centerIn: parent
             width: 110; height: 110; radius: 55
             color: s.isDay ? "#ffe9a0" : "#cfd9ff"
-            opacity: 0.18
+            opacity: s.isDay ? 0.18 : 0.04 + 0.14 * s.moonIllum / 100
             SequentialAnimation on scale {
                 running: s.run && orb.visible; loops: Animation.Infinite
                 NumberAnimation { to: 1.18; duration: 2600; easing.type: Easing.InOutSine }
@@ -82,14 +85,8 @@ Item {
                 }
             }
         }
-        Rectangle {
-            anchors.fill: parent; radius: width / 2
-            color: s.isDay ? "#ffd75a" : "#eef1fa"
-            Repeater {   // moon craters
-                model: s.isDay ? [] : [[10, 12, 12], [30, 26, 9], [16, 36, 7]]
-                Rectangle { required property var modelData; x: modelData[0]; y: modelData[1]; width: modelData[2]; height: width; radius: width / 2; color: "#c9d0e3" }
-            }
-        }
+        Rectangle { anchors.fill: parent; radius: width / 2; color: "#ffd75a"; visible: s.isDay }
+        MoonDisc { anchors.fill: parent; visible: !s.isDay; phase: s.moonPhase; mirror: s.moonMirror }
     }
 
     // clouds

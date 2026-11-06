@@ -125,7 +125,7 @@ function normalize(r, nHours) {
     if (i < 0) i = 0;
     const hours = [];
     for (let k = i; k < Math.min(i + nHours, h.time.length); k++)
-        hours.push(Object.assign({ time: h.time[k], temp: h.temperature_2m[k], pop: h.precipitation_probability[k] || 0 },
+        hours.push(Object.assign({ time: h.time[k], temp: h.temperature_2m[k], pop: h.precipitation_probability[k] ?? null },
                                  info(h.weather_code[k], h.is_day[k])));
     const days = d.time.map((t, k) => Object.assign({
         date: t, max: d.temperature_2m_max[k], min: d.temperature_2m_min[k], pop: d.precipitation_probability_max[k] || 0,
@@ -149,4 +149,20 @@ function summary(wx, h24) {
     const d = now.apparent_temperature - now.temperature_2m;
     if (Math.abs(d) >= 3) return "Feels " + Math.abs(Math.round(d)) + "° " + (d < 0 ? "colder" : "warmer") + " than the actual temperature";
     return "Dry for the next 12 hours";
+}
+
+// ---- moon phase (computed locally; accurate to roughly a day, plenty for display) ----
+const SYNODIC = 29.530588853;
+function moon(date, lat) {
+    const jd = date.getTime() / 86400000 + 2440587.5;
+    const age = (((jd - 2451550.1) % SYNODIC) + SYNODIC) % SYNODIC; // days since the 2000-01-06 new moon
+    const f = age / SYNODIC; // 0 new … 0.5 full … 1 new
+    const name = f < 0.0339 || f >= 0.9661 ? "New Moon" : f < 0.2161 ? "Waxing Crescent" : f < 0.2839 ? "First Quarter"
+        : f < 0.4661 ? "Waxing Gibbous" : f < 0.5339 ? "Full Moon" : f < 0.7161 ? "Waning Gibbous"
+        : f < 0.7839 ? "Last Quarter" : "Waning Crescent";
+    const until = target => new Date(date.getTime() + ((((target - f) % 1) + 1) % 1) * SYNODIC * 86400000);
+    const fmt = d => Qt.locale().monthName(d.getMonth(), 1) + " " + d.getDate();
+    return { phase: f, age: age, illum: Math.round((1 - Math.cos(2 * Math.PI * f)) / 2 * 100), name: name,
+             mirror: lat < 0, // southern hemisphere sees the phase mirrored
+             nextFull: fmt(until(0.5)), nextNew: fmt(until(0)) };
 }
