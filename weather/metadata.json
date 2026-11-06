@@ -6,7 +6,7 @@
     "Icon": "weather-few-clouds",
     "Category": "Environment and Weather",
     "Authors": [{ "Name": "Dara Samii" }],
-    "License": "MIT",
+    "License": "GPL-3.0-only",
     "Version": "1.0.0",
     "Website": "https://github.com/DaraSamii/DaraPlasmoids"
   },

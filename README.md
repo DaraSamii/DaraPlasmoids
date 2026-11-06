@@ -6,7 +6,7 @@
 
 [![Plasma 6](https://img.shields.io/badge/KDE%20Plasma-6.x-1d99f3?logo=kde&logoColor=white)](https://kde.org/plasma-desktop/)
 [![Qt 6 / QML](https://img.shields.io/badge/Qt%206-QML-41cd52?logo=qt&logoColor=white)](https://doc.qt.io/qt-6/qtqml-index.html)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 [![Data: Open-Meteo](https://img.shields.io/badge/data-Open--Meteo-ff9a3d)](https://open-meteo.com)
 
 </div>
@@ -303,4 +303,6 @@ The widget talks only to `api.open-meteo.com` and `geocoding-api.open-meteo.com`
 - Weather icons: [Breeze](https://invent.kde.org/frameworks/breeze-icons) icon theme from your Plasma installation.
 - Built with Qt 6 / QML and Kirigami.
 
-Released under the [MIT License](LICENSE) © 2026 Dara Samii.
+Released under the [GNU General Public License v3.0](LICENSE) © 2026 Dara Samii.
+
+Also from this author: [**Dara Launcher**](https://github.com/DaraSamii/DaraLauncher), a fast full-screen application launcher for Plasma 6 (also GPL-3.0).
