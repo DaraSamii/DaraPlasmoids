@@ -14,7 +14,7 @@ A detailed, animated weather widget for your panel. Add one per city (e.g. Montr
 - **Panel icon + temperature**, optional city name and unit letter. Tooltip shows condition and high/low. Click to open the popup.
 - **Animated hero scene** that follows the weather and time of day: sun with rotating rays, moon and twinkling stars, drifting clouds, rain, snow, fog and lightning.
 - **Plain-language summary**: "Rain expected around 3 p.m.", "Dry for the next 12 hours", or how much wind/humidity changes the feel.
-- **Next 12 / 24 / 48 hours**: scrollable strip with icons, a smooth temperature curve that draws itself in, day markers (Today, Sat · Nov 7) where a new day starts, and a rain-chance bar with the percentage for every hour (Shift + wheel or drag to scroll sideways). Times read `2 a.m.`, `3 p.m.` (or 24-hour).
+- **Next 12 / 24 / 48 hours**: scrollable strip with icons, a smooth temperature curve that draws itself in, day markers (Today, Sat · Nov 7) where a new day starts, and a rain-chance bar with the percentage for every hour (‹ › buttons, drag, touchpad, or Shift + wheel to scroll sideways). Times read `2 a.m.`, `3 p.m.` (or 24-hour).
 - **Moon phase**: the night sky shows the real phase; a Moon card gives the phase name, illumination, day of the lunar cycle and the next full/new moon (computed locally, accurate to about a day; mirrored for the southern hemisphere).
 - **3–7 day forecast** with weekday + date and animated high/low range bars.
 - **Sun arc**: bold colored sunrise and sunset times, daylight length, and a pulsing sun showing where it is now.

@@ -257,7 +257,38 @@ Item {
                     title: i18n("Next %1 hours", full.cfg.hoursCount); order: 0
                     Layout.leftMargin: Kirigami.Units.smallSpacing; Layout.rightMargin: Kirigami.Units.smallSpacing
                     PlasmaComponents.Label { text: i18n("Blue bars: chance of rain"); opacity: 0.75; font.pixelSize: Kirigami.Theme.smallFont.pixelSize }
-                    HourlyChart { Layout.fillWidth: true; hours: full.wx ? full.wx.hours : []; h24: full.cfg.clock24 }
+                    Item {
+                        id: hourlyBox
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: chart.implicitHeight
+                        readonly property real maxX: Math.max(0, chart.contentWidth - chart.width)
+                        function slide(dir) {
+                            slideAnim.stop();
+                            slideAnim.from = chart.contentX;
+                            slideAnim.to = Math.max(0, Math.min(maxX, chart.contentX + dir * chart.width * 0.7));
+                            slideAnim.start();
+                        }
+                        NumberAnimation { id: slideAnim; target: chart; property: "contentX"; duration: 380; easing.type: Easing.OutCubic }
+                        HourlyChart { id: chart; anchors.fill: parent; hours: full.wx ? full.wx.hours : []; h24: full.cfg.clock24 }
+                        Repeater {
+                            model: [-1, 1]
+                            PlasmaComponents.ToolButton {
+                                required property int modelData
+                                readonly property bool canGo: modelData < 0 ? chart.contentX > 1 : chart.contentX < hourlyBox.maxX - 1
+                                visible: opacity > 0
+                                opacity: canGo ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 200 } }
+                                x: modelData < 0 ? 2 : hourlyBox.width - width - 2
+                                y: chart.dayRowH + Kirigami.Units.gridUnit * 1.2
+                                width: Kirigami.Units.gridUnit * 2; height: width
+                                icon.name: modelData < 0 ? "go-previous-symbolic" : "go-next-symbolic"
+                                focusPolicy: Qt.NoFocus
+                                background: Rectangle { radius: width / 2; color: Qt.rgba(0, 0, 0, parent.hovered ? 0.65 : 0.45); border.color: Qt.rgba(1, 1, 1, 0.3) }
+                                onClicked: hourlyBox.slide(modelData)
+                                QQC2.ToolTip.text: modelData < 0 ? i18n("Earlier") : i18n("Later"); QQC2.ToolTip.visible: hovered
+                            }
+                        }
+                    }
                 }
                 Card {
                     visible: full.cfg.showDaily
@@ -337,17 +368,27 @@ Item {
                             }
                         }
                     }
-                    RowLayout {
+                    GridLayout {
                         Layout.fillWidth: true
                         Layout.topMargin: Kirigami.Units.smallSpacing
+                        columns: 2
+                        columnSpacing: Kirigami.Units.largeSpacing * 2
                         Repeater {
-                            model: full.moonInfo ? [[i18n("NEXT FULL MOON"), full.moonInfo.nextFull], [i18n("NEXT NEW MOON"), full.moonInfo.nextNew]] : []
-                            ColumnLayout {
+                            model: full.moonInfo ? [[i18n("Next full moon"), full.moonInfo.nextFull, "#eef1fa"], [i18n("Next new moon"), full.moonInfo.nextNew, "#8fa0c8"]] : []
+                            Rectangle {
                                 required property var modelData
-                                Layout.fillWidth: true
-                                spacing: 0
-                                PlasmaComponents.Label { text: modelData[0]; font.bold: true; font.letterSpacing: 1; color: "#cfd9ff"; font.pixelSize: Kirigami.Theme.smallFont.pixelSize }
-                                PlasmaComponents.Label { text: modelData[1]; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.4 }
+                                Layout.fillWidth: true; Layout.preferredWidth: 1   // equal-width tiles
+                                implicitHeight: dateCol.implicitHeight + Kirigami.Units.largeSpacing * 2
+                                radius: Kirigami.Units.largeSpacing
+                                color: Qt.alpha(modelData[2], 0.12)
+                                border.color: Qt.alpha(modelData[2], 0.4)
+                                ColumnLayout {
+                                    id: dateCol
+                                    anchors { fill: parent; margins: Kirigami.Units.largeSpacing }
+                                    spacing: 0
+                                    PlasmaComponents.Label { text: modelData[0]; font.bold: true; opacity: 0.85 }
+                                    PlasmaComponents.Label { text: modelData[1]; font.bold: true; font.pixelSize: Kirigami.Units.gridUnit * 1.5 }
+                                }
                             }
                         }
                     }
