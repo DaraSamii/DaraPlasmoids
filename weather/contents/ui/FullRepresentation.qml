@@ -256,7 +256,25 @@ Item {
                     visible: full.cfg.showHourly
                     title: i18n("Next %1 hours", full.cfg.hoursCount); order: 0
                     Layout.leftMargin: Kirigami.Units.smallSpacing; Layout.rightMargin: Kirigami.Units.smallSpacing
-                    PlasmaComponents.Label { text: i18n("Blue bars: chance of rain"); opacity: 0.75; font.pixelSize: Kirigami.Theme.smallFont.pixelSize }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        PlasmaComponents.Label { text: i18n("Blue bars: chance of rain"); opacity: 0.75; font.pixelSize: Kirigami.Theme.smallFont.pixelSize; Layout.fillWidth: true }
+                        Repeater {
+                            model: [-1, 1]
+                            PlasmaComponents.ToolButton {
+                                required property int modelData
+                                enabled: modelData < 0 ? chart.contentX > 1 : chart.contentX < hourlyBox.maxX - 1
+                                opacity: enabled ? 1 : 0.35
+                                Behavior on opacity { NumberAnimation { duration: 200 } }
+                                Layout.preferredWidth: Kirigami.Units.gridUnit * 1.9; Layout.preferredHeight: Layout.preferredWidth
+                                icon.name: modelData < 0 ? "go-previous-symbolic" : "go-next-symbolic"
+                                focusPolicy: Qt.NoFocus
+                                background: Rectangle { radius: width / 2; color: Qt.rgba(1, 1, 1, parent.hovered ? 0.22 : 0.12); border.color: Qt.rgba(1, 1, 1, 0.3) }
+                                onClicked: hourlyBox.slide(modelData)
+                                QQC2.ToolTip.text: modelData < 0 ? i18n("Earlier hours") : i18n("Later hours"); QQC2.ToolTip.visible: hovered
+                            }
+                        }
+                    }
                     Item {
                         id: hourlyBox
                         Layout.fillWidth: true
@@ -270,24 +288,6 @@ Item {
                         }
                         NumberAnimation { id: slideAnim; target: chart; property: "contentX"; duration: 380; easing.type: Easing.OutCubic }
                         HourlyChart { id: chart; anchors.fill: parent; hours: full.wx ? full.wx.hours : []; h24: full.cfg.clock24 }
-                        Repeater {
-                            model: [-1, 1]
-                            PlasmaComponents.ToolButton {
-                                required property int modelData
-                                readonly property bool canGo: modelData < 0 ? chart.contentX > 1 : chart.contentX < hourlyBox.maxX - 1
-                                visible: opacity > 0
-                                opacity: canGo ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 200 } }
-                                x: modelData < 0 ? 2 : hourlyBox.width - width - 2
-                                y: chart.dayRowH + Kirigami.Units.gridUnit * 1.2
-                                width: Kirigami.Units.gridUnit * 2; height: width
-                                icon.name: modelData < 0 ? "go-previous-symbolic" : "go-next-symbolic"
-                                focusPolicy: Qt.NoFocus
-                                background: Rectangle { radius: width / 2; color: Qt.rgba(0, 0, 0, parent.hovered ? 0.65 : 0.45); border.color: Qt.rgba(1, 1, 1, 0.3) }
-                                onClicked: hourlyBox.slide(modelData)
-                                QQC2.ToolTip.text: modelData < 0 ? i18n("Earlier") : i18n("Later"); QQC2.ToolTip.visible: hovered
-                            }
-                        }
                     }
                 }
                 Card {
