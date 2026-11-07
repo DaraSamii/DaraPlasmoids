@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="icon" type="String"><default>start-here-kde</default></entry>
+    <entry name="wallpaperMode" type="Int"><default>0</default></entry>
+    <entry name="wallpaperPath" type="String"><default></default></entry>
+    <entry name="dim" type="Int"><default>68</default></entry>
+    <entry name="blur" type="Int"><default>40</default></entry>
+    <entry name="favoritesSeeded" type="Bool"><default>false</default></entry>
+  </group>
+  <group name="Layout">
+    <entry name="viewMode" type="Int"><default>0</default></entry>
+    <entry name="panelWidth" type="Int"><default>92</default></entry>
+    <entry name="favColumns" type="Int"><default>3</default></entry>
+    <entry name="appColumns" type="Int"><default>0</default></entry>
+    <entry name="powerSize" type="Int"><default>40</default></entry>
+    <entry name="iconPreset" type="Int"><default>2</default></entry>
+    <entry name="tileSpacing" type="Int"><default>6</default></entry>
+  </group>
+  <group name="Appearance">
+    <entry name="textPreset" type="Int"><default>2</default></entry>
+    <entry name="fontFamily" type="String"><default></default></entry>
+    <entry name="accentMode" type="Int"><default>0</default></entry>
+    <entry name="accentColor" type="Color"><default>#3daee9</default></entry>
+    <entry name="tileRadius" type="Int"><default>14</default></entry>
+    <entry name="cardOpacity" type="Int"><default>10</default></entry>
+    <entry name="animations" type="Bool"><default>true</default></entry>
+  </group>
+  <group name="Behavior">
+    <entry name="showCategories" type="Bool"><default>true</default></entry>
+    <entry name="showRecent" type="Bool"><default>true</default></entry>
+    <entry name="showFrequent" type="Bool"><default>true</default></entry>
+    <entry name="showPower" type="Bool"><default>true</default></entry>
+    <entry name="searchDocuments" type="Bool"><default>true</default></entry>
+    <entry name="startCategory" type="Int"><default>0</default></entry>
+    <entry name="lastCategory" type="Int"><default>0</default></entry>
+    <entry name="clearSearch" type="Bool"><default>true</default></entry>
+    <entry name="closeOnLaunch" type="Bool"><default>true</default></entry>
+    <entry name="closeOnClickOutside" type="Bool"><default>true</default></entry>
+    <entry name="showFavorites" type="Bool"><default>true</default></entry>
+    <entry name="showLetterRail" type="Bool"><default>true</default></entry>
+  </group>
+</kcfg>

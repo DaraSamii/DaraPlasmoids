@@ -11,6 +11,17 @@
 
 </div>
 
+## Dara Launcher
+
+A fast, full-screen application launcher (in [`launcher/`](launcher)): favorites, all apps as a grid, a list or A–Z sections, categories, recent and most-used apps, search across apps, files, settings and the calculator, and power buttons. Press **Meta** and it opens at once, full screen on your **primary monitor**, whichever monitor has focus.
+
+```sh
+kpackagetool6 -t Plasma/Applet -u launcher || kpackagetool6 -t Plasma/Applet -i launcher
+launcher/tests/run.sh      # sandboxed UI suite: your real widget and settings are untouched
+```
+
+Screenshots, the full feature list and settings reference: [DaraSamii/DaraLauncher](https://github.com/DaraSamii/DaraLauncher).
+
 ## Dara Weather
 
 A detailed, animated, glass-styled weather widget for your Plasma panel. Click it and a popup slides out with the current conditions, an hourly strip, a multi-day forecast, sun and moon, and rich detail cards. Add one widget per city (for example **Montreal** and **Tehran**) — every instance keeps its own places and settings.
@@ -305,4 +316,4 @@ The widget talks only to `api.open-meteo.com` and `geocoding-api.open-meteo.com`
 
 Released under the [GNU General Public License v3.0](LICENSE) © 2026 Dara Samii.
 
-Also from this author: [**Dara Launcher**](https://github.com/DaraSamii/DaraLauncher), a fast full-screen application launcher for Plasma 6 (also GPL-3.0).
+[**Dara Launcher**](#dara-launcher) (in `launcher/`, also on [GitHub](https://github.com/DaraSamii/DaraLauncher)) is released under the same license.
