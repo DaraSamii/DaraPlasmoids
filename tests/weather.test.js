@@ -167,6 +167,20 @@ t("normalize: models with a short horizon (Météo-France ~4 days) are cut clean
     assert.strictEqual(n.days.length, 4); n.days.forEach(d => { assert(Number.isFinite(d.max) && Number.isFinite(d.min)); assert(d.text !== "Unknown"); });
     assert.strictEqual(n.hours.length, cut - 13); n.hours.forEach(h => assert(Number.isFinite(h.temp)));
 });
+t("normalize: rain so far today and over the last 24 h come from the hourly amounts, not the 15-minute current value", () => {
+    const o = api(); o.hourly.precipitation = o.hourly.time.map(() => 1); // 1 mm every hour; current is 13:15 on the first day
+    const n = W.normalize(o, 24);
+    assert.strictEqual(n.now.precipitation, 0);
+    assert.strictEqual(n.now.rainToday, 14); // 00:00 .. 13:00
+    assert.strictEqual(n.now.rain24h, 14);   // only 14 hours exist before now in this fixture
+    const m = W.normalize(api({ "current.time": "2026-11-07T02:00" }), 24); assert.strictEqual(m.now.rainToday, 0); // no precipitation array: 0, not NaN
+    o.current.time = "2026-11-07T02:00"; const p = W.normalize(o, 24);
+    assert.strictEqual(p.now.rainToday, 3); assert.strictEqual(p.now.rain24h, 24);
+});
+t("normalize: days before today (past_days) are dropped, so days[0] is today", () => {
+    const n = W.normalize(api({ "current.time": "2026-11-07T09:00" }), 24);
+    assert.strictEqual(n.days[0].date, "2026-11-07"); assert.strictEqual(n.days.length, 6);
+});
 t("normalize: all-null forecast gives empty lists instead of throwing", () => {
     const o = api(); o.hourly.temperature_2m = o.hourly.temperature_2m.map(() => null);
     ["temperature_2m_max", "temperature_2m_min"].forEach(key => { o.daily[key] = o.daily[key].map(() => null); });

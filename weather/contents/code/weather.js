@@ -111,9 +111,9 @@ function pressureText(hpa, u) {
 function forecastUrl(p, u) {
     return "https://api.open-meteo.com/v1/forecast?latitude=" + p.lat + "&longitude=" + p.lon
         + "&current=temperature_2m,apparent_temperature,relative_humidity_2m,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m"
-        + "&hourly=temperature_2m,precipitation_probability,weather_code,is_day,visibility,uv_index"
+        + "&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,is_day,visibility,uv_index"
         + "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,precipitation_sum"
-        + "&timezone=auto&forecast_days=7&temperature_unit=" + UNITS.temp[u.temp][1]
+        + "&timezone=auto&past_days=1&forecast_days=8&temperature_unit=" + UNITS.temp[u.temp][1] // past day: rain over the last 24 h; 8 days: 7 left once days before local today are dropped
         + "&wind_speed_unit=" + UNITS.wind[u.wind][1] + "&precipitation_unit=" + UNITS.precip[u.precip][1]
         + (u.model && u.model !== "best_match" ? "&models=" + u.model : "");
 }
@@ -129,11 +129,17 @@ function normalize(r, nHours) {
         hours.push(Object.assign({ time: h.time[k], temp: h.temperature_2m[k], pop: h.precipitation_probability[k] ?? null },
                                  info(h.weather_code[k], h.is_day[k])));
     }
-    const days = d.time.map((t, k) => k).filter(k => d.temperature_2m_max[k] !== null && d.temperature_2m_min[k] !== null).map(k => { const t = d.time[k]; return Object.assign({
+    const today = c.time.substr(0, 10);
+    const days = d.time.map((t, k) => k).filter(k => d.time[k] >= today && d.temperature_2m_max[k] !== null && d.temperature_2m_min[k] !== null).map(k => { const t = d.time[k]; return Object.assign({
         date: t, max: d.temperature_2m_max[k], min: d.temperature_2m_min[k], pop: d.precipitation_probability_max[k] || 0,
         sunrise: d.sunrise[k], sunset: d.sunset[k], uv: d.uv_index_max[k], precip: d.precipitation_sum[k]
-    }, info(d.weather_code[k], 1)); });
-    const now = Object.assign({}, c, info(c.weather_code, c.is_day), { visibility: h.visibility[i], uv: h.uv_index[i] });
+    }, info(d.weather_code[k], 1)); }).slice(0, 7);
+    // Hourly precipitation is the amount over the preceding hour, so hours up to the current one have fallen already.
+    // c.precipitation only covers the last 15 minutes: 0 right after a whole day of rain.
+    const rain = h.precipitation || [], sum = (a, b) => { let s = 0; for (let k = Math.max(0, a); k <= b; k++) s += rain[k] || 0; return Math.round(s * 100) / 100; };
+    let first = h.time.findIndex(t => t.substr(0, 10) === today); if (first < 0) first = i;
+    const now = Object.assign({}, c, info(c.weather_code, c.is_day), { visibility: h.visibility[i], uv: h.uv_index[i],
+        rainToday: sum(first, i), rain24h: sum(i - 23, i) });
     return { now: now, hours: hours, days: days, units: r.current_units };
 }
 

@@ -449,8 +449,8 @@ Item {
                         Tile {
                             visible: full.cfg.showPrecip
                             label: i18n("Rain & snow"); accent: "#5aa0ff"
-                            value: full.now ? full.now.precipitation + " " + full.precipLabel : ""
-                            sub: wx ? i18n("Today %1 %2", wx.days[0].precip, full.precipLabel) : ""
+                            value: full.now ? full.now.rainToday + " " + full.precipLabel : ""
+                            sub: full.now ? i18n("Today so far · last 24 h %1 %2", full.now.rain24h, full.precipLabel) : ""
                             RainDrops { anchors.fill: parent; run: full.run }
                         }
                         Tile {

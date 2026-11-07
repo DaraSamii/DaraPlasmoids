@@ -51,7 +51,7 @@ A detailed, animated, glass-styled weather widget for your Plasma panel. Click i
 - **Daily forecast** (3–7 days): weekday and date (`Sat` / `Nov 7`), rain chance, and animated low → high range bars.
 - **Sun**: bold sunrise and sunset times, daylight length, and a pulsing sun showing where it is on its arc.
 - **Moon**: the real phase in the night sky, plus a card with the phase name, illumination %, day of the lunar cycle, a new → full → new progress bar, and the next full and new moon (mirrored for the southern hemisphere).
-- **Detail cards** with their own visuals: a wind compass with a swinging arrow and streaks that blow faster in stronger wind, a water droplet that fills to the humidity level, falling drops for rain and snow amounts, and colored gauges for UV index, pressure, visibility and cloud cover.
+- **Detail cards** with their own visuals: a wind compass with a swinging arrow and streaks that blow faster in stronger wind, a water droplet that fills to the humidity level, falling drops for rain and snow (amount so far today, and over the last 24 hours), and colored gauges for UV index, pressure, visibility and cloud cover.
 
 **Practical**
 - **Multiple places** per widget: switch with chips, add with **+** (city search), remove with the trash button on the selected chip.
