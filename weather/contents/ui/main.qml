@@ -44,6 +44,11 @@ PlasmoidItem {
     onPlaceChanged: { wx = null; load(); }
     onFetchKeyChanged: { wx = null; load(); }
     Component.onCompleted: load()
+    // refresh on open so a popup left stale (sleep, failed fetch) never shows old hours
+    Connections {
+        target: root
+        function onExpandedChanged() { if (root.expanded) root.load(); }
+    }
 
     Timer {
         interval: Math.max(5, root.cfg.refreshMin) * 60000
